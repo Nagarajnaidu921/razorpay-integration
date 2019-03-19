@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+</head>
+<body>
+	<button onclick="pay()">pay</button>
+	<script type="text/javascript">
+		function capture(data) {
+			$.post(`http://localhost:3000/api/product/payment/capture`, data, (data)=>{
+				console.log(data);
+			})
+		}
+		function pay() {
+			const data = [
+			{
+				id: "1b7531df-7ed4-4a56-a02c-0118bf50e6c2",
+				quantity: 2
+			},
+			{
+				id: "9ad744be-d7ec-46aa-93ea-f20931226d10",
+				quantity: 2
+			}
+			]
+
+			$.post(`http://localhost:3000/api/product/order`, {data}, (res)=> {
+				let options = res;
+				res.handler = (result) => {
+					// console.log(result)
+					capture(result)
+				};
+
+				var rzp1 = new Razorpay(res);
+				rzp1.open();
+			});
+		}
+	</script>
+</body>
+</html>
